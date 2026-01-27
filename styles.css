@@ -1,0 +1,57 @@
+:root {
+  --radius: 1rem;
+}
+
+body {
+  background: #f8f9fa;
+}
+
+/* keep content away from iPhone notch/home bar */
+.app-container {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.card {
+  border-radius: var(--radius);
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+}
+
+.question-text {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.choice-btn {
+  text-align: left;
+  white-space: normal;
+  line-height: 1.35;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+}
+
+.stat-box {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 0.9rem;
+  padding: 0.9rem;
+}
+
+.action-bar {
+  position: sticky;
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* On larger screens, avoid huge buttons */
+@media (min-width: 576px) {
+  .btn-sm-normal {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.95rem !important;
+  }
+}
