@@ -1,67 +1,145 @@
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="canonical" href="https://html5-templates.com/" />
-    <title>Responsive HTML5 Page Layout Template</title>
-    <meta name="description" content="Simple HTML5 Page layout template with header, footer, sidebar etc.">
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz App</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-	<header>
-		<div id="logo">Bozhidar&nbsp;Peev</div>
-		<nav>  
-			<ul>
-				<li><a href="/">Data Science</a>
-				<li><a href="https://html-css-js.com/">Machine Learning</a>
-				<li><a href="https://html-css-js.com/css/code/">Deep Learning</a>
-				<li><a href="https://htmlcheatsheet.com/js/">Signal Processing</a>
-			</ul>
-		</nav>
-	</header>
-	<section>
-		<strong>Machine Learning & Data Science enthusiast</strong>
-	</section>
-	<section id="pageContent">
-		<main role="main">
-			<article>
-				<h2>Introduction</h2>
-				<p>Hello, my name is Bozhidar Peev, 26 years old, living in Greece. I'm currently doing my MSc in Signal Processing and Machine Learning, at the Department of Computer Engineering & Informatics, University of Patras.</p>
-			</article>
-			<article>
-				<h2>CV.</h2>
-				<p>MSc in Information Processing Systems and Machine Intelligence, Department of Computer Engineering & Informatics, University of Patras 2020-2022</p><br>
-				<p>BSc in Physics, Department of Physics, University of Patras 2015-2020</p>
 
-			</article>
-			<article>
-				<h2>Projects & Repositories</h2>
-				<p>Custom Neural Network with 1 hidden layer, dimensions 784x300x1, with Exponential Cost(Loss) Function</p><br>
-				<p><a href="https://mpozip.github.io/Mnist---exponential-cost-NN/">Jupyter Notebook</a></p>
-			</article>
-			<article>
-				<p>Custom Neural Network with 1 hidden layer, dimensions 784x300x1, with Hinge Cost(Loss) Function</p><br>
-				<p><a href="https://mpozip.github.io/Mnist-Hinge-cost-NN/">Jupyter Notebook</a></p>
-			</article>
-		</main>
-		<aside>
-			<div>Sidebar 1</div>
-			<div>Sidebar 2</div>
-			<div>Sidebar 3</div>
-		</aside>
-	</section>
-	<footer>
-		<p>&copy; You can copy, edit and publish this template but please leave a link to our website | <a href="https://html5-templates.com/" target="_blank" rel="nofollow">HTML5 Templates</a></p>
-		<address>
-			Contact: <a href="mailto:me@example.com">Mail me</a>
-		</address>
-	</footer>
+<div class="container py-3 py-sm-4 app-container">
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="h4 mb-0">Quiz</h1>
+    <div class="text-muted small d-none d-sm-block">Question range selection</div>
+  </div>
+
+  <!-- Start -->
+  <div id="startCard" class="card shadow-sm">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+
+        <div class="col-12 col-sm-6">
+          <label class="form-label">JSON file</label>
+          <input id="jsonPath" class="form-control" value="./questions.json">
+          <div class="form-text">Tip: use a local server (fetch doesn’t work with file://).</div>
+        </div>
+
+        <div class="col-7 col-sm-3">
+          <label class="form-label">Start</label>
+          <input id="startInput" type="number" class="form-control" value="1" min="1">
+        </div>
+
+        <div class="col-7 col-sm-3">
+          <label class="form-label">End</label>
+          <input id="endInput" type="number" class="form-control" value="30" min="1">
+        </div>
+
+        <div class="col-5 col-sm-12">
+          <button id="startBtn" class="btn btn-primary w-100 btn-lg btn-sm-normal">
+            Start
+          </button>
+        </div>
+
+      </div>
+
+      <div id="loadError" class="alert alert-danger mt-3 d-none mb-0"></div>
+
+      <div class="alert alert-warning mt-3 mb-0">
+        If JSON won’t load, run:
+        <span class="mono">python -m http.server 8000</span>
+        and open <span class="mono">http://localhost:8000/quiz.html</span>
+      </div>
+    </div>
+  </div>
 
 
+  <!-- Quiz -->
+  <div id="quizCard" class="card shadow-sm d-none mt-3">
+    <div class="card-body pb-0">
+
+      <div class="d-flex justify-content-between align-items-center mb-2 small">
+        <div class="text-muted">
+          <span>Q <span id="qNum"></span>/<span id="qTotal"></span></span>
+          <span class="mx-1">•</span>
+          <span>Page <span id="qPage" class="mono"></span></span>
+        </div>
+
+        <div class="small">
+          <span class="badge text-bg-success" id="scoreGood">0</span>
+          <span class="badge text-bg-danger" id="scoreBad">0</span>
+        </div>
+      </div>
+
+      <div id="qText" class="question-text mb-3"></div>
+
+      <div id="choices" class="d-grid gap-2 pb-3"></div>
+
+      <div id="feedback" class="alert d-none mt-2 mb-3"></div>
+    </div>
+
+    <!-- Mobile sticky actions -->
+    <div class="card-footer bg-white border-0 pt-0">
+      <div class="d-flex justify-content-between gap-2 action-bar">
+        <button id="quitBtn" class="btn btn-outline-secondary flex-fill btn-lg btn-sm-normal">
+          Quit
+        </button>
+
+        <button id="nextBtn" class="btn btn-primary flex-fill btn-lg btn-sm-normal d-none">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Results -->
+  <div id="resultsCard" class="card shadow-sm d-none mt-3">
+    <div class="card-body">
+
+      <div class="d-flex justify-content-between align-items-start mb-3 gap-2">
+        <div>
+          <h2 class="h5 mb-1">Results</h2>
+          <div class="text-muted small">Questions: <span id="rangeShow" class="mono"></span></div>
+        </div>
+
+        <button id="restartBtn" class="btn btn-primary btn-lg btn-sm-normal">
+          New Test
+        </button>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="stat-box">
+            <div class="text-muted small">Correct</div>
+            <div class="fs-2 fw-semibold" id="finalGood">0</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-box">
+            <div class="text-muted small">Wrong</div>
+            <div class="fs-2 fw-semibold" id="finalBad">0</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-4" />
+
+      <h3 class="h6 mb-2">Wrong Answers</h3>
+      <div id="wrongList" class="d-grid gap-3"></div>
+      <div id="noWrong" class="alert alert-success d-none mb-0">Perfect score 🎉</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
 </body>
-
 </html>
